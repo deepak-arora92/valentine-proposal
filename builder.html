@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Link Builder 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .builder-container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: #f5f5f5;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #ebebeb;
+            border-color: #667eea;
+        }
+
+        .file-input-label.has-file {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            border-style: solid;
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            text-align: center;
+            display: none;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-container.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .link-display {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #667eea;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .copy-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .copy-btn.copied {
+            background: #2196f3;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box p {
+            font-size: 0.9em;
+            color: #1976d2;
+            line-height: 1.5;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 600px) {
+            .builder-container {
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="builder-container">
+        <h1>💖 Valentine's Link Builder 💖</h1>
+        <p class="subtitle">Create a personalized Valentine's proposal page</p>
+
+        <div class="info-box">
+            <p><strong>How it works:</strong> Upload a photo, add a romantic quote, and generate a custom link to share with your special someone! 💕</p>
+        </div>
+
+        <form id="builderForm">
+            <div class="form-group">
+                <label for="photoInput">
+                    📸 Upload Her Photo <span style="color: red;">*</span>
+                </label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="photoInput" accept="image/*" required>
+                    <label for="photoInput" class="file-input-label" id="fileLabel">
+                        <span class="emoji">📁</span> Click to choose a photo
+                    </label>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                    <img id="previewImg" src="" alt="Preview">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="quoteInput">
+                    💬 Beautiful Quote <span style="color: red;">*</span>
+                </label>
+                <textarea
+                    id="quoteInput"
+                    placeholder="Enter a romantic quote or message... e.g., 'In you, I've found the love of my life and my closest, truest friend. 💕'"
+                    required
+                ></textarea>
+            </div>
+
+            <button type="submit" class="generate-btn" id="generateBtn">
+                ✨ Generate Link
+            </button>
+        </form>
+
+        <div class="result-container" id="resultContainer">
+            <div class="result-title">🎉 Your Custom Link is Ready!</div>
+            <div class="link-display" id="linkDisplay"></div>
+            <button class="copy-btn" id="copyBtn" onclick="copyLink()">
+                📋 Copy Link
+            </button>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #666; text-align: center;">
+                Share this link with your Valentine! 💕
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const photoInput = document.getElementById('photoInput');
+        const fileLabel = document.getElementById('fileLabel');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImg = document.getElementById('previewImg');
+        const form = document.getElementById('builderForm');
+        const resultContainer = document.getElementById('resultContainer');
+        const linkDisplay = document.getElementById('linkDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+
+        let photoBase64 = '';
+
+        // Handle photo selection
+        photoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileLabel.classList.add('has-file');
+                fileLabel.innerHTML = `<span class="emoji">✅</span> ${file.name}`;
+
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    photoBase64 = event.target.result;
+                    previewImg.src = photoBase64;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const quote = document.getElementById('quoteInput').value;
+
+            if (!photoBase64) {
+                alert('Please upload a photo!');
+                return;
+            }
+
+            if (!quote.trim()) {
+                alert('Please enter a quote!');
+                return;
+            }
+
+            // Generate the link
+            const baseUrl = window.location.href.replace('builder.html', 'index.html');
+            const params = new URLSearchParams({
+                photo: photoBase64,
+                quote: quote
+            });
+
+            const fullUrl = `${baseUrl}?${params.toString()}`;
+
+            // Display the link
+            linkDisplay.textContent = fullUrl;
+            resultContainer.classList.add('show');
+
+            // Scroll to result
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        // Copy link function
+        function copyLink() {
+            const link = linkDisplay.textContent;
+            navigator.clipboard.writeText(link).then(function() {
+                copyBtn.textContent = '✅ Copied!';
+                copyBtn.classList.add('copied');
+                setTimeout(function() {
+                    copyBtn.textContent = '📋 Copy Link';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                alert('Failed to copy link. Please copy it manually.');
+            });
+        }
+    </script>
+</body>
+</html>
