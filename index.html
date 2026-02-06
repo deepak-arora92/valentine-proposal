@@ -220,6 +220,7 @@
             }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 </head>
 <body>
     <div class="hearts-container" id="hearts"></div>
@@ -268,44 +269,38 @@
             heartsContainer.appendChild(heart);
         }
 
-        // Parse URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const binId = urlParams.get('id');
+        // Load data from URL hash
+        function loadData() {
+            try {
+                // Check if there's data in the hash fragment
+                const hash = window.location.hash.substring(1);
 
-        // Fetch data from GitHub Gist if ID exists
-        async function loadData() {
-            if (binId) {
-                try {
-                    const response = await fetch(`https://api.github.com/gists/${binId}`);
-                    if (response.ok) {
-                        const gist = await response.json();
-                        const fileContent = gist.files['valentine-data.json'].content;
-                        const data = JSON.parse(fileContent);
+                if (hash) {
+                    // Decompress the data
+                    const jsonString = LZString.decompressFromEncodedURIComponent(hash);
+                    const data = JSON.parse(jsonString);
 
-                        // Set photo and quote
-                        if (data.photo) {
-                            document.getElementById('photoDisplay').src = data.photo;
-                        }
-                        if (data.quote) {
-                            document.getElementById('quoteDisplay').textContent = data.quote;
-                        }
-                    } else {
-                        // Fallback
-                        document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
+                    // Set photo and quote
+                    if (data.photo) {
+                        document.getElementById('photoDisplay').src = data.photo;
                     }
-                } catch (error) {
-                    console.error('Error loading data:', error);
-                    document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
-                }
-            } else {
-                // Fallback for old URL format or direct access
-                const photoData = urlParams.get('photo');
-                const quote = urlParams.get('quote') || 'You make my heart smile! 💕';
+                    if (data.quote) {
+                        document.getElementById('quoteDisplay').textContent = data.quote;
+                    }
+                } else {
+                    // Fallback for old URL format or direct access
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const photoData = urlParams.get('photo');
+                    const quote = urlParams.get('quote') || 'You make my heart smile! 💕';
 
-                if (photoData) {
-                    document.getElementById('photoDisplay').src = photoData;
+                    if (photoData) {
+                        document.getElementById('photoDisplay').src = photoData;
+                    }
+                    document.getElementById('quoteDisplay').textContent = decodeURIComponent(quote);
                 }
-                document.getElementById('quoteDisplay').textContent = decodeURIComponent(quote);
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
             }
         }
 
