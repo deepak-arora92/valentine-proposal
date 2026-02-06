@@ -286,9 +286,19 @@
                     const decoded = atob(hash);
                     const data = JSON.parse(decoded);
 
-                    // Set photo
+                    // Set photo with error handling
                     if (data.img) {
-                        document.getElementById('photoDisplay').src = data.img;
+                        const photoEl = document.getElementById('photoDisplay');
+                        photoEl.src = data.img;
+
+                        // Handle image load errors
+                        photoEl.onerror = function() {
+                            photoEl.style.display = 'none';
+                            const errorMsg = document.createElement('div');
+                            errorMsg.style.cssText = 'color: #ff6b9d; padding: 20px; font-size: 1.1em;';
+                            errorMsg.textContent = '💔 Image could not be loaded. Please use a direct image link from Imgur, imgbb, or postimages.';
+                            photoEl.parentElement.appendChild(errorMsg);
+                        };
                     }
 
                     // Set quote
