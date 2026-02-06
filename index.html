@@ -98,7 +98,12 @@
             justify-content: center;
             margin-top: 30px;
             position: relative;
-            min-height: 60px;
+            min-height: 200px;
+        }
+
+        #stage1 {
+            position: relative;
+            min-height: 400px;
         }
 
         button {
@@ -127,6 +132,8 @@
             background: #f0f0f0;
             color: #666;
             position: absolute;
+            transition: all 0.3s ease;
+            z-index: 5;
         }
 
         .no-btn:hover {
@@ -315,16 +322,62 @@
         const noBtn = document.getElementById('noBtn');
         const message = document.getElementById('message');
 
+        // Initialize No button position
+        function initNoButton() {
+            const buttonsContainer = document.querySelector('.buttons');
+            const yesBtn = document.querySelector('.yes-btn');
+            const yesBtnRect = yesBtn.getBoundingClientRect();
+            const buttonsRect = buttonsContainer.getBoundingClientRect();
+
+            // Position it to the right of Yes button initially
+            const initialX = yesBtnRect.right - buttonsRect.left + 20;
+            const initialY = 0;
+
+            noBtn.style.left = initialX + 'px';
+            noBtn.style.top = initialY + 'px';
+        }
+
+        // Initialize on load
+        window.addEventListener('load', initNoButton);
+
         function moveButton() {
-            const container = document.querySelector('.buttons');
-            const containerRect = container.getBoundingClientRect();
+            const stage = document.getElementById('stage1');
+            const yesBtn = document.querySelector('.yes-btn');
+            const stageRect = stage.getBoundingClientRect();
+            const yesBtnRect = yesBtn.getBoundingClientRect();
 
-            const maxX = containerRect.width - noBtn.offsetWidth;
-            const maxY = containerRect.height - noBtn.offsetHeight;
+            let randomX, randomY;
+            let attempts = 0;
+            const maxAttempts = 20;
 
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
+            // Keep trying until we find a position that doesn't overlap with Yes button
+            do {
+                // Generate random position within the stage
+                randomX = Math.random() * (stageRect.width - noBtn.offsetWidth - 40) + 20;
+                randomY = Math.random() * (stageRect.height - noBtn.offsetHeight - 40) + 20;
 
+                // Calculate the potential position of No button
+                const noBtnLeft = stageRect.left + randomX;
+                const noBtnTop = stageRect.top + randomY;
+                const noBtnRight = noBtnLeft + noBtn.offsetWidth;
+                const noBtnBottom = noBtnTop + noBtn.offsetHeight;
+
+                // Check if it overlaps with Yes button (with some padding)
+                const overlaps = !(
+                    noBtnRight < yesBtnRect.left - 20 ||
+                    noBtnLeft > yesBtnRect.right + 20 ||
+                    noBtnBottom < yesBtnRect.top - 20 ||
+                    noBtnTop > yesBtnRect.bottom + 20
+                );
+
+                attempts++;
+
+                if (!overlaps || attempts >= maxAttempts) {
+                    break;
+                }
+            } while (true);
+
+            // Position relative to stage1
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
 
