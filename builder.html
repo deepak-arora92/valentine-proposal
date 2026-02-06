@@ -326,7 +326,7 @@
         });
 
         // Handle form submission
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const quote = document.getElementById('quoteInput').value;
@@ -341,21 +341,53 @@
                 return;
             }
 
-            // Generate the link
-            const baseUrl = window.location.href.replace('builder.html', 'index.html');
-            const params = new URLSearchParams({
-                photo: photoBase64,
-                quote: quote
-            });
+            // Disable button and show loading
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ Generating...';
 
-            const fullUrl = `${baseUrl}?${params.toString()}`;
+            try {
+                // Create data object
+                const data = {
+                    photo: photoBase64,
+                    quote: quote
+                };
 
-            // Display the link
-            linkDisplay.textContent = fullUrl;
-            resultContainer.classList.add('show');
+                // Store data in JSONBin.io (free service)
+                const response = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Bin-Private': 'false'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            // Scroll to result
-            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                if (!response.ok) {
+                    throw new Error('Failed to create link');
+                }
+
+                const result = await response.json();
+                const binId = result.metadata.id;
+
+                // Generate the link
+                const baseUrl = window.location.href.replace('builder.html', 'index.html');
+                const fullUrl = `${baseUrl}?id=${binId}`;
+
+                // Display the link
+                linkDisplay.textContent = fullUrl;
+                resultContainer.classList.add('show');
+
+                // Scroll to result
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            } catch (error) {
+                alert('Failed to generate link. Please try again.');
+                console.error(error);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '✨ Generate Link';
+            }
         });
 
         // Copy link function

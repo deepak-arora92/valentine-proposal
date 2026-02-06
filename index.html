@@ -270,14 +270,46 @@
 
         // Parse URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const photoData = urlParams.get('photo');
-        const quote = urlParams.get('quote') || 'You make my heart smile! 💕';
+        const binId = urlParams.get('id');
 
-        // Set photo and quote
-        if (photoData) {
-            document.getElementById('photoDisplay').src = photoData;
+        // Fetch data from JSONBin.io if ID exists
+        async function loadData() {
+            if (binId) {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        const data = result.record;
+
+                        // Set photo and quote
+                        if (data.photo) {
+                            document.getElementById('photoDisplay').src = data.photo;
+                        }
+                        if (data.quote) {
+                            document.getElementById('quoteDisplay').textContent = data.quote;
+                        }
+                    } else {
+                        // Fallback
+                        document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
+                    }
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                    document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
+                }
+            } else {
+                // Fallback for old URL format or direct access
+                const photoData = urlParams.get('photo');
+                const quote = urlParams.get('quote') || 'You make my heart smile! 💕';
+
+                if (photoData) {
+                    document.getElementById('photoDisplay').src = photoData;
+                }
+                document.getElementById('quoteDisplay').textContent = decodeURIComponent(quote);
+            }
         }
-        document.getElementById('quoteDisplay').textContent = decodeURIComponent(quote);
+
+        // Load data on page load
+        loadData();
 
         const messages = [
             "Please... 🥺",
