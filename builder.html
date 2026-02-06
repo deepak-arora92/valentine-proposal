@@ -241,7 +241,6 @@
             }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 </head>
 <body>
     <div class="builder-container">
@@ -249,20 +248,20 @@
         <p class="subtitle">Create a personalized Valentine's proposal page</p>
 
         <div class="info-box">
-            <p><strong>How it works:</strong> Upload a photo, add a romantic quote, and generate a custom link to share with your special someone! 💕</p>
+            <p><strong>How it works:</strong> Enter an image URL (upload your photo to Imgur, Google Photos, or any image host), add a romantic quote, and generate a custom link to share with your special someone! 💕</p>
         </div>
 
         <form id="builderForm">
             <div class="form-group">
                 <label for="photoInput">
-                    📸 Upload Her Photo <span style="color: red;">*</span>
+                    📸 Image URL <span style="color: red;">*</span>
                 </label>
-                <div class="file-input-wrapper">
-                    <input type="file" id="photoInput" accept="image/*" required>
-                    <label for="photoInput" class="file-input-label" id="fileLabel">
-                        <span class="emoji">📁</span> Click to choose a photo
-                    </label>
-                </div>
+                <input
+                    type="url"
+                    id="photoInput"
+                    placeholder="https://example.com/your-image.jpg"
+                    required
+                />
                 <div class="preview-container" id="previewContainer">
                     <img id="previewImg" src="" alt="Preview">
                 </div>
@@ -298,7 +297,6 @@
 
     <script>
         const photoInput = document.getElementById('photoInput');
-        const fileLabel = document.getElementById('fileLabel');
         const previewContainer = document.getElementById('previewContainer');
         const previewImg = document.getElementById('previewImg');
         const form = document.getElementById('builderForm');
@@ -306,23 +304,19 @@
         const linkDisplay = document.getElementById('linkDisplay');
         const copyBtn = document.getElementById('copyBtn');
 
-        let photoBase64 = '';
+        // Handle photo URL input - show preview
+        photoInput.addEventListener('input', function(e) {
+            const url = e.target.value.trim();
+            if (url) {
+                previewImg.src = url;
+                previewContainer.style.display = 'block';
 
-        // Handle photo selection
-        photoInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                fileLabel.classList.add('has-file');
-                fileLabel.innerHTML = `<span class="emoji">✅</span> ${file.name}`;
-
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    photoBase64 = event.target.result;
-                    previewImg.src = photoBase64;
-                    previewContainer.style.display = 'block';
+                // Hide preview if image fails to load
+                previewImg.onerror = function() {
+                    previewContainer.style.display = 'none';
                 };
-                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
             }
         });
 
@@ -330,52 +324,33 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const quote = document.getElementById('quoteInput').value;
+            const photoUrl = document.getElementById('photoInput').value.trim();
+            const quote = document.getElementById('quoteInput').value.trim();
 
-            if (!photoBase64) {
-                alert('Please upload a photo!');
+            if (!photoUrl) {
+                alert('Please enter an image URL!');
                 return;
             }
 
-            if (!quote.trim()) {
+            if (!quote) {
                 alert('Please enter a quote!');
                 return;
             }
 
-            // Disable button and show loading
-            const generateBtn = document.getElementById('generateBtn');
-            generateBtn.disabled = true;
-            generateBtn.textContent = '⏳ Generating...';
+            // Generate the link
+            const baseUrl = window.location.href.replace('builder.html', 'index.html');
+            const params = new URLSearchParams({
+                img: photoUrl,
+                quote: quote
+            });
+            const fullUrl = `${baseUrl}?${params.toString()}`;
 
-            try {
-                // Create data object
-                const data = {
-                    photo: photoBase64,
-                    quote: quote
-                };
+            // Display the link
+            linkDisplay.textContent = fullUrl;
+            resultContainer.classList.add('show');
 
-                // Compress the data using LZ-String
-                const jsonString = JSON.stringify(data);
-                const compressed = LZString.compressToEncodedURIComponent(jsonString);
-
-                // Generate the link using hash fragment
-                const baseUrl = window.location.href.replace('builder.html', 'index.html');
-                const fullUrl = `${baseUrl}#${compressed}`;
-
-                // Display the link
-                linkDisplay.textContent = fullUrl;
-                resultContainer.classList.add('show');
-
-                // Scroll to result
-                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-            } catch (error) {
-                alert('Failed to generate link. Please try again.');
-                console.error(error);
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.textContent = '✨ Generate Link';
-            }
+            // Scroll to result
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
 
         // Copy link function
