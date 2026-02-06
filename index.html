@@ -268,19 +268,34 @@
             heartsContainer.appendChild(heart);
         }
 
-        // Load data from URL parameters
+        // Load data from URL hash fragment
         function loadData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const photoUrl = urlParams.get('img');
-            const quote = urlParams.get('quote') || 'You make my heart smile! 💕';
+            try {
+                // Get encoded data from hash fragment
+                const hash = window.location.hash.substring(1);
 
-            // Set photo
-            if (photoUrl) {
-                document.getElementById('photoDisplay').src = photoUrl;
+                if (hash) {
+                    // Decode the data
+                    const decoded = atob(hash);
+                    const data = JSON.parse(decoded);
+
+                    // Set photo
+                    if (data.img) {
+                        document.getElementById('photoDisplay').src = data.img;
+                    }
+
+                    // Set quote
+                    if (data.quote) {
+                        document.getElementById('quoteDisplay').textContent = data.quote;
+                    }
+                } else {
+                    // Default message if no data
+                    document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('quoteDisplay').textContent = 'You make my heart smile! 💕';
             }
-
-            // Set quote
-            document.getElementById('quoteDisplay').textContent = quote;
         }
 
         // Load data on page load

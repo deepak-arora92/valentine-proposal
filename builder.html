@@ -320,6 +320,17 @@
             }
         });
 
+        // Generate a short hash from a string
+        function generateHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(36).substring(0, 8);
+        }
+
         // Handle form submission
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -337,13 +348,16 @@
                 return;
             }
 
-            // Generate the link
+            // Create data object and encode it
+            const data = { img: photoUrl, quote: quote };
+            const encoded = btoa(JSON.stringify(data));
+
+            // Generate a unique short hash
+            const shortHash = generateHash(photoUrl + quote);
+
+            // Generate the link with hash fragment
             const baseUrl = window.location.href.replace('builder.html', 'index.html');
-            const params = new URLSearchParams({
-                img: photoUrl,
-                quote: quote
-            });
-            const fullUrl = `${baseUrl}?${params.toString()}`;
+            const fullUrl = `${baseUrl}?id=${shortHash}#${encoded}`;
 
             // Display the link
             linkDisplay.textContent = fullUrl;
