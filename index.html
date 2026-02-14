@@ -309,6 +309,89 @@
             opacity: 0.7;
         }
 
+        /* Boarding Pass Card */
+        .boarding-pass {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe0e6 100%);
+            border: 2px solid #ff8fab;
+            border-radius: 16px;
+            max-width: 420px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(255, 107, 157, 0.25);
+            text-align: left;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .boarding-pass-header {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            padding: 14px 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .boarding-pass-body {
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .boarding-pass-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .boarding-pass-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .boarding-pass-label {
+            font-size: 0.75em;
+            color: #cc5a80;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-family: Arial, sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .boarding-pass-value {
+            font-size: 1.4em;
+            color: #d6336c;
+            font-weight: 700;
+        }
+
+        .boarding-pass-divider {
+            border: none;
+            border-top: 2px dashed #ff8fab;
+            margin: 0;
+        }
+
+        .boarding-pass-footer {
+            padding: 14px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .boarding-pass-footer .boarding-pass-value {
+            font-size: 1.2em;
+        }
+
+        .boarding-pass-stub {
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 600px) {
             h1 {
                 font-size: 2em;
@@ -319,6 +402,15 @@
             button {
                 padding: 12px 30px;
                 font-size: 1.1em;
+            }
+            .boarding-pass-body,
+            .boarding-pass-footer {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 16px;
+            }
+            .boarding-pass-value {
+                font-size: 1.2em;
             }
         }
     </style>
@@ -368,6 +460,46 @@
             </div>
             <div class="quote" id="quoteDisplay"></div>
             <div class="emoji">🌹💕✨</div>
+            <button class="next-btn" onclick="goToStage4()">Next 💌</button>
+        </div>
+
+        <!-- Stage 4: Boarding Pass -->
+        <div class="stage" id="stage4">
+            <h1>Your Date is Confirmed! 💌</h1>
+            <div class="boarding-pass">
+                <div class="boarding-pass-header">✈ Boarding Pass ✈</div>
+                <div class="boarding-pass-body">
+                    <div class="boarding-pass-field full-width">
+                        <span class="boarding-pass-label">Passenger</span>
+                        <span class="boarding-pass-value">Vidya Oberoi</span>
+                    </div>
+                    <div class="boarding-pass-field">
+                        <span class="boarding-pass-label">Date</span>
+                        <span class="boarding-pass-value">14th February</span>
+                    </div>
+                    <div class="boarding-pass-field">
+                        <span class="boarding-pass-label">Time</span>
+                        <span class="boarding-pass-value">8:00 PM</span>
+                    </div>
+                    <div class="boarding-pass-field full-width">
+                        <span class="boarding-pass-label">Destination</span>
+                        <span class="boarding-pass-value">Ludhiana</span>
+                    </div>
+                </div>
+                <hr class="boarding-pass-divider">
+                <div class="boarding-pass-footer">
+                    <div class="boarding-pass-field">
+                        <span class="boarding-pass-label">Gate</span>
+                        <span class="boarding-pass-value">LOVE</span>
+                    </div>
+                    <div class="boarding-pass-field">
+                        <span class="boarding-pass-label">Seat</span>
+                        <span class="boarding-pass-value">YOUR HEART</span>
+                    </div>
+                </div>
+                <div class="boarding-pass-stub">Purpose: Dinner Date 🌹</div>
+            </div>
+            <div class="emoji">💕✨🎉</div>
         </div>
     </div>
 
@@ -560,6 +692,12 @@
         function goToStage3() {
             document.getElementById('stage2').classList.remove('active');
             document.getElementById('stage3').classList.add('active');
+        }
+
+        function goToStage4() {
+            document.getElementById('stage3').classList.remove('active');
+            document.getElementById('stage4').classList.add('active');
+            startCelebration();
         }
     </script>
 
