@@ -382,6 +382,32 @@
             font-size: 1.2em;
         }
 
+        .boarding-pass-barcode {
+            padding: 12px 24px;
+            text-align: center;
+        }
+
+        .barcode-lines {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            height: 40px;
+            margin-bottom: 4px;
+        }
+
+        .barcode-lines span {
+            display: inline-block;
+            background: #d6336c;
+            height: 100%;
+        }
+
+        .barcode-text {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7em;
+            color: #cc5a80;
+            letter-spacing: 3px;
+        }
+
         .boarding-pass-stub {
             background: linear-gradient(135deg, #ff6b9d, #ff8fab);
             color: white;
@@ -402,6 +428,14 @@
             button {
                 padding: 12px 30px;
                 font-size: 1.1em;
+            }
+            .container {
+                padding: 20px;
+            }
+            .punjabi-msg {
+                font-size: 0.95em;
+                margin: 12px 0;
+                line-height: 1.7;
             }
             .boarding-pass-body,
             .boarding-pass-footer {
@@ -496,6 +530,10 @@
                         <span class="boarding-pass-label">Seat</span>
                         <span class="boarding-pass-value">YOUR HEART</span>
                     </div>
+                </div>
+                <div class="boarding-pass-barcode">
+                    <div class="barcode-lines"></div>
+                    <div class="barcode-text">LOVE-0214-2026-VDY</div>
                 </div>
                 <div class="boarding-pass-stub">Purpose: Dinner Date 🌹</div>
             </div>
@@ -693,6 +731,17 @@
             document.getElementById('stage2').classList.remove('active');
             document.getElementById('stage3').classList.add('active');
         }
+
+        // Generate barcode lines
+        (function() {
+            const container = document.querySelector('.barcode-lines');
+            for (let i = 0; i < 60; i++) {
+                const bar = document.createElement('span');
+                bar.style.width = (Math.random() > 0.5 ? 2 : 1) + 'px';
+                bar.style.opacity = Math.random() * 0.4 + 0.6;
+                container.appendChild(bar);
+            }
+        })();
 
         function goToStage4() {
             document.getElementById('stage3').classList.remove('active');
